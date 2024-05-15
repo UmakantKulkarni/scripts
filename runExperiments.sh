@@ -23,7 +23,7 @@ declare -a subDir=("100" "200" "300" "400")
 
 declare -a experimentDirAry=("$experimentDirPrefix-1" "$experimentDirPrefix-2" "$experimentDirPrefix-3" "$experimentDirPrefix-4" "$experimentDirPrefix-5" "$experimentDirPrefix-6" "$experimentDirPrefix-7" "$experimentDirPrefix-8" "$experimentDirPrefix-9" "$experimentDirPrefix-10")
 
-declare -a ueNodes=("10.10.1.2")
+declare -a ueNodes=("10.10.1.2" "10.10.1.3")
 
 for experimentDir in "${experimentDirAry[@]}"
 do
@@ -43,15 +43,24 @@ do
         sleep 60
         
         #start-ztx
-        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}" 1
-        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}/${pcsDir}" 1
-        bash /opt/scripts/runNodeCmd.sh "ztx -i 10.10.1.2 -z 1 > /opt/Experiments/${experimentDir}/${pcsDir}/ztx_ran.log 2>&1 &" 1
-        #ztx -i 10.10.1.2 -z 1 > /opt/Experiments/${experimentDir}/${pcsDir}/ztx_ran.log 2>&1 &
+        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}" 1 2
+        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}/${pcsDir}" 1 2
+        
+        ranCount=1
+        for ueNodeIp in "${ueNodes[@]}"
+        do
+            bash /opt/scripts/runNodeCmd.sh "ztx -i $ueNodeIp -z 1 > /opt/Experiments/${experimentDir}/${pcsDir}/ztx_ran.log 2>&1 &" $ranCount
+            #ztx -i 10.10.1.2 -z 1 > /opt/Experiments/${experimentDir}/${pcsDir}/ztx_ran.log 2>&1 &
+            ranCount=$((ranCount+1))
+        done
         sleep 5
 
         #start-ran
-        bash /opt/scripts/runNodeCmd.sh "nr-gnb -c /opt/UERANSIM/config/open5gs-gnb.yaml > /dev/null 2>&1 &" 1
+        bash /opt/scripts/runNodeCmd.sh "nr-gnb -c /opt/UERANSIM/config/open5gs-gnb.yaml > /dev/null 2>&1 &" 1 2
         #nr-gnb -c /opt/UERANSIM/config/open5gs-gnb.yaml > /dev/null 2>&1 &
+
+        bash /opt/scripts/startTopVm.sh $experimentDir $pcsDir
+        bash /opt/scripts/startTopNode.sh $experimentDir $pcsDir 1 2
         
         #rm -rf /opt/Experiments/$experimentDir/$pcsDir/istioPerf
         #mkdir -p /opt/Experiments/$experimentDir/$pcsDir/istioPerf
@@ -79,6 +88,11 @@ do
         #start-ue
         for ueNodeIp in "${ueNodes[@]}"
         do
+            if (( pcsDir > 500 )); then
+                sleep 0.3
+            else
+                sleep 0.2
+            fi
             echo "UE-SIM IP Address is $ueNodeIp"
             curl --verbose --request POST --header "Content-Type:application/json" --data '{"numSessions":"'$numSessions'","expDir":"'$experimentDir'","subExpDir":"'$pcsDir'"}'  http://$ueNodeIp:15692
         done
@@ -87,6 +101,9 @@ do
         sleep $callTime
         cd /opt/scripts
         
+        #stop-monitoring
+        bash /opt/scripts/stopTopVm.sh
+        bash /opt/scripts/stopTopNode.sh 1 2
         bash /opt/scripts/savePodLogs.sh $experimentDir $pcsDir
         
         #sleep 60
@@ -107,16 +124,16 @@ do
         # done
         
         #stop-ran
-        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-ue" 1
+        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-ue" 1 2
         #pkill -f nr-ue
         
         sleep 5
         
-        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-gnb" 1
+        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-gnb" 1 2
         #pkill -f nr-gnb
         
         sleep 5
-        bash /opt/scripts/runNodeCmd.sh "pkill -f ztx" 1
+        bash /opt/scripts/runNodeCmd.sh "pkill -f ztx" 1 2
         #pkill -f ztx
         
         sleep 5
