@@ -13,6 +13,7 @@ cd /opt/scripts && git pull
 cd /opt/Secure5G && git pull
 cd /opt/opensource-5g-core && git pull
 cd /opt/open5gs && git pull
+cd /opt/oai-cn5g-fed && git pull
 
 #rm -f /etc/containerd/config.toml
 systemctl enable docker.service

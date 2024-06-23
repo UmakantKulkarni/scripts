@@ -59,10 +59,6 @@ git clone -b ztx_01 https://github.com/UmakantKulkarni/UERANSIM && cd UERANSIM &
 cp build/nr-* /usr/local/bin/
 cd ..
 
-cd $my_dir
-git clone -b ztx_01 https://github.com/UmakantKulkarni/oai-cn5g-fed
-cd /opt/oai-cn5g-fed && git pull
-
 #https://docs.srsran.com/projects/project/en/latest/user_manuals/source/installation.html
 cd $my_dir
 git clone https://github.com/srsran/srsRAN_Project.git
@@ -108,6 +104,7 @@ git clone -b ztx_01 https://github.com/UmakantKulkarni/Secure5G
 git clone -b benchmark https://github.com/UmakantKulkarni/opensource-5g-core
 git clone -b oai https://github.com/UmakantKulkarni/scripts
 git clone -b benchmark --recursive https://github.com/UmakantKulkarni/open5gs
+git clone -b ztx_01 https://github.com/UmakantKulkarni/oai-cn5g-fed
 #git clone https://github.com/UmakantKulkarni/free5gmano
 #git clone https://github.com/UmakantKulkarni/free5gc
 #git clone https://github.com/UmakantKulkarni/amf
