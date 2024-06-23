@@ -56,13 +56,13 @@ git clone -b benchmark https://github.com/UmakantKulkarni/opensource-5g-core
 cd /opt/opensource-5g-core && git pull
 
 cd /opt
-git clone -b benchmark https://github.com/UmakantKulkarni/scripts
+git clone -b oai https://github.com/UmakantKulkarni/scripts
 cd /opt/scripts && git pull
 
 #https://istio.io/latest/docs/setup/getting-started/#download
 cd /opt
-curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.20.3 TARGET_ARCH=x86_64 sh -
-cd istio-1.20.3
+curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.22.1 TARGET_ARCH=x86_64 sh -
+cd istio-1.22.1
 echo "export PATH=$PWD/bin:$PATH" >> ~/.bashrc
 export PATH=$PWD/bin:$PATH
 
@@ -82,9 +82,9 @@ echo "complete -F __start_kubectl k" >> ~/.bashrc
 echo "export PCS_SETUP_TUN_INTF=false" >> ~/.bashrc
 source ~/.bashrc
 
-echo "Downloading Ubuntu Purdue ZTX QCOW Image into /tmp directory - https://www.cs.purdue.edu/homes/ukulkarn/ubuntu-22.04-purdue-ztx.qcow2"
+#echo "Downloading Ubuntu Purdue ZTX QCOW Image into /tmp directory - https://www.cs.purdue.edu/homes/ukulkarn/ubuntu-22.04-purdue-ztx.qcow2"
 
-cd $my_dir
-rm -f ubuntu-22.04-purdue-ztx.qcow2
-wget https://www.cs.purdue.edu/homes/ukulkarn/ubuntu-22.04-purdue-ztx.qcow2
+#cd $my_dir
+#rm -f ubuntu-22.04-purdue-ztx.qcow2
+#wget https://www.cs.purdue.edu/homes/ukulkarn/ubuntu-22.04-purdue-ztx.qcow2
 
