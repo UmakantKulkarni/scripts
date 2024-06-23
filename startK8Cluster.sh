@@ -95,3 +95,30 @@ echo ""
 echo "Finished Configuring RAN Nodes"
 echo ""
 
+
+echo "Waiting for 60 seconds..."
+sleep 60
+
+restart_cmd="systemctl restart containerd"
+for nodeNum in "${workerNodes[@]}"
+do	
+	node=node$nodeNum
+    echo ""
+    echo "Executing restart comand on Worker node $node"
+    echo ""
+    ssh -o StrictHostKeyChecking=no root@$node $restart_cmd
+    echo ""
+    echo "Finished Executing comand"
+    echo ""
+done
+
+
+echo "Waiting 200 seconds for nodes to be ready..."
+sleep 30
+mcmd="kubectl taint nodes $(kubectl get nodes --selector=node-role.kubernetes.io/control-plane | awk 'FNR==2{print $1}') node-role.kubernetes.io/control-plane-"
+ssh -o StrictHostKeyChecking=no root@node$masterNode "$mcmd"
+sleep 170
+
+echo ""
+echo "Started K8s cluster"
+echo ""
