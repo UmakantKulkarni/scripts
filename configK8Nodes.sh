@@ -4,12 +4,6 @@
 
 DEBIAN_FRONTEND=noninteractive
 
-HOSTNAME=purdue-ztx
-hostnamectl set-hostname $HOSTNAME
-sed -i -e "s/purdue-ztx/$HOSTNAME/g" /etc/hostname
-sed -i -e "s/purdue-ztx/$HOSTNAME/g" /etc/hosts
-source ~/.bashrc
-
 my_dir=/opt
 
 cd $my_dir
@@ -19,7 +13,7 @@ DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 DEBIAN_FRONTEND=noninteractive apt-get -y update
 DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
 
-DEBIAN_FRONTEND=noninteractive apt -y install python3-pip python3-setuptools python3-wheel ninja-build build-essential flex bison git libsctp-dev libgnutls28-dev libgcrypt-dev libssl-dev libidn11-dev libmongoc-dev libbson-dev libmicrohttpd-dev libcurl4-gnutls-dev meson iproute2 libnghttp2-dev vim iptables cmake gnupg libtins-dev gdb tzdata ntp ntpstat ntpdate libtalloc-dev apache2-utils default-jre default-jdk wget nano make g++ lksctp-tools net-tools tcpdump curl jq iputils-ping nghttp2-client bash-completion xauth gcc autoconf libtool pkg-config libmnl-dev libyaml-dev sshpass x11-apps feh tshark openssh-client openssh-server systemd systemd-sysv dbus dbus-user-session bridge-utils libvirt-clients libvirt-daemon-system qemu-system-x86 kpartx extlinux cryptsetup qemu-kvm virtinst libvirt-daemon-system cloud-image-utils cloud-guest-utils libfftw3-dev libmbedtls-dev libboost-program-options-dev libconfig++-dev libzmq3-dev libgtest-dev libyaml-cpp-dev software-properties-common 
+DEBIAN_FRONTEND=noninteractive apt -y install python3-pip python3-setuptools python3-wheel ninja-build build-essential flex bison git libsctp-dev libgnutls28-dev libgcrypt-dev libssl-dev libidn11-dev libmongoc-dev libbson-dev libmicrohttpd-dev libcurl4-gnutls-dev meson iproute2 libnghttp2-dev vim iptables cmake gnupg libtins-dev gdb tzdata ntp ntpstat ntpdate libtalloc-dev apache2-utils default-jre default-jdk wget nano make g++ lksctp-tools net-tools tcpdump curl jq iputils-ping nghttp2-client bash-completion xauth gcc autoconf libtool pkg-config libmnl-dev libyaml-dev sshpass x11-apps feh tshark openssh-client openssh-server systemd systemd-sysv dbus dbus-user-session bridge-utils libvirt-clients libvirt-daemon-system qemu-system-x86 kpartx extlinux cryptsetup qemu-kvm virtinst libvirt-daemon-system cloud-image-utils cloud-guest-utils libfftw3-dev libmbedtls-dev libboost-program-options-dev libconfig++-dev libzmq3-dev libgtest-dev libyaml-cpp-dev software-properties-common  libnetfilter-queue-dev traceroute
 
 #echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 #systemctl restart ssh
@@ -47,12 +41,13 @@ apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 #https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 apt-get -y update
-apt-get install -y ca-certificates
-apt-get install -y apt-transport-https
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+apt-get install -y apt-transport-https ca-certificates curl gpg
+mkdir -p -m 755 /etc/apt/keyrings
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 apt-get -y update
 apt-get install -y kubectl kubelet kubeadm
+apt-mark hold kubelet kubeadm kubectl
 
 # Install kind For AMD64 / x86_64
 #curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
@@ -63,6 +58,10 @@ cd $my_dir
 git clone -b ztx_01 https://github.com/UmakantKulkarni/UERANSIM && cd UERANSIM && make
 cp build/nr-* /usr/local/bin/
 cd ..
+
+cd $my_dir
+git clone -b ztx_01 https://github.com/UmakantKulkarni/oai-cn5g-fed
+cd /opt/oai-cn5g-fed && git pull
 
 #https://docs.srsran.com/projects/project/en/latest/user_manuals/source/installation.html
 cd $my_dir
@@ -96,13 +95,9 @@ mkdir k8s
 cd k8s
 curl -sL https://run.linkerd.io/install | sh
 
-calicoVer="v3.26.2"
 cd $my_dir
 cd k8s
 #https://docs.tigera.io/calico/3.25/getting-started/kubernetes/self-managed-onprem/onpremises
-#curl https://raw.githubusercontent.com/projectcalico/calico/$calicoVer/manifests/tigera-operator.yaml -O
-#curl https://raw.githubusercontent.com/projectcalico/calico/$calicoVer/manifests/custom-resources.yaml -O
-#curl https://raw.githubusercontent.com/projectcalico/calico/$calicoVer/manifests/calico.yaml -O
 wget https://raw.githubusercontent.com/projectcalico/calico/master/manifests/calico.yaml
 #https://github.com/flannel-io/flannel#deploying-flannel-manually
 wget https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
@@ -111,7 +106,7 @@ wget https://raw.githubusercontent.com/UmakantKulkarni/myCodes/master/k8/metrics
 cd $my_dir
 git clone -b ztx_01 https://github.com/UmakantKulkarni/Secure5G
 git clone -b benchmark https://github.com/UmakantKulkarni/opensource-5g-core
-git clone -b benchmark https://github.com/UmakantKulkarni/scripts
+git clone -b oai https://github.com/UmakantKulkarni/scripts
 git clone -b benchmark --recursive https://github.com/UmakantKulkarni/open5gs
 #git clone https://github.com/UmakantKulkarni/free5gmano
 #git clone https://github.com/UmakantKulkarni/free5gc
@@ -171,8 +166,8 @@ kubeadm reset --force --cri-socket unix:///run/containerd/containerd.sock
 
 #https://istio.io/latest/docs/setup/getting-started/#download
 cd /opt
-curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.19.3 TARGET_ARCH=x86_64 sh -
-cd istio-1.19.3
+curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.22.1 TARGET_ARCH=x86_64 sh -
+cd istio-1.22.1
 echo "export PATH=$PWD/bin:$PATH" >> ~/.bashrc
 export PATH=$PWD/bin:$PATH
 
