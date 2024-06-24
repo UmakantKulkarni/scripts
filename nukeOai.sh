@@ -14,7 +14,7 @@ else
     NAMESPACE=oai5gc
 fi
 
-/opt/istio-1.19.3/bin/istioctl uninstall -c /etc/kubernetes/admin.conf -y --purge
+/opt/istio-1.22.1/bin/istioctl uninstall -c /etc/kubernetes/admin.conf -y --purge
 kubectl --kubeconfig=/etc/kubernetes/admin.conf delete namespace istio-system
 kubectl --kubeconfig=/etc/kubernetes/admin.conf label namespace $NAMESPACE istio-injection=disabled --overwrite
 
@@ -37,6 +37,7 @@ else
 fi
 cp /etc/kubernetes/admin.conf ~/.kube/config
 export KUBECONFIG=/etc/kubernetes/admin.conf
+helm dependency build
 helm -n $NAMESPACE install -f values.yaml 5gcore ./
 sleep 10
 kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-context --current --namespace=$NAMESPACE
