@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
-declare -a nodeLabels=("master" "amf" "smf" "upf" "nf1" "nf2")
-declare -a nodes=("master" "worker1" "worker2" "worker3" "worker4" "worker5")
+declare -a nodeLabels=("master" "amf" "smf" "upf")
+declare -a workerNodes=("0" "1" "2" "3")
 
 arrayIndex=0
-for node in "${nodes[@]}"
+for nodeNum in "${workerNodes[@]}"
 do	
+	node=node$nodeNum
 	echo ""
 	echo "Labelling Node - $node"
 	echo ""
-    kubectl --kubeconfig=/etc/kubernetes/admin.conf label --overwrite nodes $node pcs-nf-type=${nodeLabels[arrayIndex]}
+    kubectl label --overwrite nodes $node.$nodePrefix kubernetes.io/ztx-nf-type=${nodeLabels[arrayIndex]}
 	echo ""
 	echo "Finished Labelling Node - $node"
     echo ""
