@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+nodePrefix="$1"
 declare -a nodeLabels=("master" "amf" "smf" "upf")
 declare -a workerNodes=("0" "1" "2" "3")
 
