@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-if [[ $# -ne 1 ]] ; then
-    echo "Expected at least 1 CLI argument - Node number"
-    exit 1
-fi
-
 ocmd="pkill -f topFile.sh"
 ktcmd="pkill -f ktopFile.sh"
 dscmd="pkill -f dockerStats.sh"
