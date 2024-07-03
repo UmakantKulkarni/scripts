@@ -18,12 +18,17 @@ experimentDirPrefix="$1"
 
 mkdir -p /opt/Experiments/
 
-#declare -a subDir=("100" "200" "300" "400" "500" "600" "700" "800" "900" "1000")
-declare -a subDir=("100" "200" "300" "400")
+declare -a subDir=("100" "200" "300" "400" "500" "600" "700" "800" "900" "1000")
 
 declare -a experimentDirAry=("$experimentDirPrefix-1" "$experimentDirPrefix-2" "$experimentDirPrefix-3" "$experimentDirPrefix-4" "$experimentDirPrefix-5" "$experimentDirPrefix-6" "$experimentDirPrefix-7" "$experimentDirPrefix-8" "$experimentDirPrefix-9" "$experimentDirPrefix-10")
 
-declare -a ueNodes=("10.10.1.2" "10.10.1.3")
+declare -a ueNodes=("10.10.1.7" "10.10.1.9")
+declare -a gnbNodes=("10.10.1.6" "10.10.1.8")
+declare -a ranNodes=("5" "7")
+
+NAMESPACE="oai5gc"
+
+bash /opt/scripts/runNodeCmd.sh "iptables -t mangle -A PREROUTING -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0 ; iptables -t mangle -A OUTPUT -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0" 5 7
 
 for experimentDir in "${experimentDirAry[@]}"
 do
@@ -35,37 +40,39 @@ do
         mkdir -p /opt/Experiments/${experimentDir}/${pcsDir}
         
         numSessions=$(( pcsDir / 1 ))
-        callTime=$(( pcsDir / 4 ))
+        #callTime=$(( pcsDir / 4 ))
+        callTime=30
         
         #cleanup
-        kubectl get pods --no-headers=true | awk '/upf|amf|bsf|pcf|udm|ausf|nrf|nssf|udr|smf/{print $1}'| xargs  kubectl delete pod
+        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/nrf|nssf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
+        sleep 5
+        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/upf|amf|pcf|udm|ausf|udr|smf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
         
         sleep 60
         
-        #start-ztx
-        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}" 1 2
-        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}/${pcsDir}" 1 2
+        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}" 5 7
+        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}/${pcsDir}" 5 7
         
-        ranCount=1
-        for ueNodeIp in "${ueNodes[@]}"
+        #start-ztx
+        ranCount=0
+        for gnbNodeIp in "${gnbNodes[@]}"
         do
-            bash /opt/scripts/runNodeCmd.sh "ztx -i $ueNodeIp -z 1 > /opt/Experiments/${experimentDir}/${pcsDir}/ztx_ran.log 2>&1 &" $ranCount
+            bash /opt/scripts/runNodeCmd.sh "ztx -i $gnbNodeIp -z 1 > /opt/Experiments/${experimentDir}/${pcsDir}/ztx_ran.log 2>&1 &" ${ranNodes[ranCount]}
             #ztx -i 10.10.1.2 -z 1 > /opt/Experiments/${experimentDir}/${pcsDir}/ztx_ran.log 2>&1 &
             ranCount=$((ranCount+1))
         done
         sleep 5
 
         #start-ran
-        bash /opt/scripts/runNodeCmd.sh "nr-gnb -c /opt/UERANSIM/config/open5gs-gnb.yaml > /dev/null 2>&1 &" 1 2
+        bash /opt/scripts/runNodeCmd.sh "nr-gnb -c /opt/UERANSIM/config/open5gs-gnb.yaml > /dev/null 2>&1 &" 5 7
         #nr-gnb -c /opt/UERANSIM/config/open5gs-gnb.yaml > /dev/null 2>&1 &
 
-        bash /opt/scripts/startTopVm.sh $experimentDir $pcsDir
-        bash /opt/scripts/startTopNode.sh $experimentDir $pcsDir 1 2
+        bash /opt/scripts/startTopNode.sh $experimentDir $pcsDir 0 1 2 3 5 6 7 8
         
         #rm -rf /opt/Experiments/$experimentDir/$pcsDir/istioPerf
         #mkdir -p /opt/Experiments/$experimentDir/$pcsDir/istioPerf
         PODARRAY=()
-        for pod in `kubectl -n open5gs get po -o json |  jq '.items[] | select(.metadata.name|contains("open5gs"))| .metadata.name' | grep -v "test\|webui\|upf\|mongo" | sed 's/"//g'` ;
+        for pod in `kubectl -n $NAMESPACE get po -o json |  jq '.items[] | select(.metadata.name|contains("oai"))| .metadata.name' | grep -v "test\|webui\|upf\|sql\|mongo" | sed 's/"//g'` ;
         do
             echo $pod
             PODARRAY+=($pod)
@@ -102,8 +109,7 @@ do
         cd /opt/scripts
         
         #stop-monitoring
-        bash /opt/scripts/stopTopVm.sh
-        bash /opt/scripts/stopTopNode.sh 1 2
+        bash /opt/scripts/stopTopNode.sh 0 1 2 3 5 6 7 8
         bash /opt/scripts/savePodLogs.sh $experimentDir $pcsDir
         
         #sleep 60
@@ -124,16 +130,16 @@ do
         # done
         
         #stop-ran
-        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-ue" 1 2
+        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-ue" 6 8
         #pkill -f nr-ue
         
         sleep 5
         
-        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-gnb" 1 2
+        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-gnb" 5 7
         #pkill -f nr-gnb
         
         sleep 5
-        bash /opt/scripts/runNodeCmd.sh "pkill -f ztx" 1 2
+        bash /opt/scripts/runNodeCmd.sh "pkill -f ztx" 5 7
         #pkill -f ztx
         
         sleep 5
@@ -148,3 +154,5 @@ do
         
     done
 done
+
+bash /opt/scripts/runNodeCmd.sh "iptables -t mangle -D PREROUTING -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0 ; iptables -t mangle -D OUTPUT -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0" 5 7
