@@ -64,7 +64,7 @@ do
         sleep 5
 
         #start-ran
-        bash /opt/scripts/runNodeCmd.sh "nr-gnb -c /opt/UERANSIM/config/oai-gnb.yaml > /dev/null 2>&1 &" 5 7
+        bash /opt/scripts/runNodeCmd.sh "nr-gnb -c /opt/UERANSIM/config/oai-gnb.yaml > /opt/Experiments/${experimentDir}/${pcsDir}/gnb.log 2>&1 &" 5 7
         #nr-gnb -c /opt/UERANSIM/config/open5gs-gnb.yaml > /dev/null 2>&1 &
 
         bash /opt/scripts/startTopNode.sh $experimentDir $pcsDir 0 1 2 3 5 6 7 8
