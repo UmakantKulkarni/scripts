@@ -19,7 +19,9 @@ experimentDirPrefix="$1"
 mkdir -p /opt/Experiments/
 
 declare -a subDir=("100" "200" "300" "400" "500" "600" "700" "800" "900" "1000")
+declare -a subDir=("100")
 
+declare -a experimentDirAry=("$experimentDirPrefix-1" "$experimentDirPrefix-2" "$experimentDirPrefix-3" "$experimentDirPrefix-4" "$experimentDirPrefix-5" "$experimentDirPrefix-6" "$experimentDirPrefix-7" "$experimentDirPrefix-8" "$experimentDirPrefix-9" "$experimentDirPrefix-10")
 declare -a experimentDirAry=("$experimentDirPrefix-1" "$experimentDirPrefix-2" "$experimentDirPrefix-3" "$experimentDirPrefix-4" "$experimentDirPrefix-5" "$experimentDirPrefix-6" "$experimentDirPrefix-7" "$experimentDirPrefix-8" "$experimentDirPrefix-9" "$experimentDirPrefix-10")
 
 declare -a ueNodes=("198.22.255.16" "198.22.255.48")
@@ -39,14 +41,17 @@ do
         rm -rf /opt/Experiments/${experimentDir}/${pcsDir}
         mkdir -p /opt/Experiments/${experimentDir}/${pcsDir}
         
-        numSessions=$(( pcsDir / 1 ))
+        numSessions=$(( pcsDir / 2 ))
         #callTime=$(( pcsDir / 4 ))
         callTime=30
         
         #cleanup
         kubectl get pods -n $NAMESPACE --no-headers=true | awk '/nrf|nssf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
         sleep 5
-        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/upf|amf|pcf|udm|ausf|udr|smf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
+        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/amf|pcf|udm|ausf|udr/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
+        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/upf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
+        sleep 5
+        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/smf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
         
         sleep 60
         
