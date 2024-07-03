@@ -22,8 +22,8 @@ declare -a subDir=("100" "200" "300" "400" "500" "600" "700" "800" "900" "1000")
 
 declare -a experimentDirAry=("$experimentDirPrefix-1" "$experimentDirPrefix-2" "$experimentDirPrefix-3" "$experimentDirPrefix-4" "$experimentDirPrefix-5" "$experimentDirPrefix-6" "$experimentDirPrefix-7" "$experimentDirPrefix-8" "$experimentDirPrefix-9" "$experimentDirPrefix-10")
 
-declare -a ueNodes=("10.10.1.7" "10.10.1.9")
-declare -a gnbNodes=("10.10.1.6" "10.10.1.8")
+declare -a ueNodes=("198.22.255.16" "198.22.255.48")
+declare -a gnbNodes=("198.22.255.49" "198.22.255.24")
 declare -a ranNodes=("5" "7")
 
 NAMESPACE="oai5gc"
