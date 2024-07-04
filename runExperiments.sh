@@ -22,11 +22,11 @@ declare -a subDir=("100" "200" "300" "400" "500" "600" "700" "800" "900" "1000")
 declare -a subDir=("100")
 
 declare -a experimentDirAry=("$experimentDirPrefix-1" "$experimentDirPrefix-2" "$experimentDirPrefix-3" "$experimentDirPrefix-4" "$experimentDirPrefix-5" "$experimentDirPrefix-6" "$experimentDirPrefix-7" "$experimentDirPrefix-8" "$experimentDirPrefix-9" "$experimentDirPrefix-10")
-declare -a experimentDirAry=("$experimentDirPrefix-1" "$experimentDirPrefix-2" "$experimentDirPrefix-3" "$experimentDirPrefix-4" "$experimentDirPrefix-5" "$experimentDirPrefix-6" "$experimentDirPrefix-7" "$experimentDirPrefix-8" "$experimentDirPrefix-9" "$experimentDirPrefix-10")
+declare -a experimentDirAry=("$experimentDirPrefix-1")
 
-declare -a ueNodes=("198.22.255.16" "198.22.255.48")
-declare -a gnbNodes=("198.22.255.49" "198.22.255.24")
-declare -a ranNodes=("5" "7")
+declare -a ueNodes=("198.22.255.16")
+declare -a gnbNodes=("198.22.255.49")
+declare -a ranNodes=("5")
 
 NAMESPACE="oai5gc"
 
@@ -41,9 +41,9 @@ do
         rm -rf /opt/Experiments/${experimentDir}/${pcsDir}
         mkdir -p /opt/Experiments/${experimentDir}/${pcsDir}
         
-        numSessions=$(( pcsDir / 2 ))
+        numSessions=$(( pcsDir / 1 ))
         #callTime=$(( pcsDir / 4 ))
-        callTime=30
+        callTime=60
         
         #cleanup
         kubectl get pods -n $NAMESPACE --no-headers=true | awk '/nrf|nssf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
@@ -55,8 +55,8 @@ do
         
         sleep 60
         
-        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}" 5 7
-        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}/${pcsDir}" 5 7
+        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}" 5
+        bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}/${pcsDir}" 5
         
         #start-ztx
         ranCount=0
@@ -69,17 +69,17 @@ do
         sleep 5
 
         #start-ran
-        bash /opt/scripts/runNodeCmd.sh "nr-gnb -c /opt/UERANSIM/config/oai-gnb.yaml > /opt/Experiments/${experimentDir}/${pcsDir}/gnb.log 2>&1 &" 5 7
+        #bash /opt/scripts/runNodeCmd.sh "nr-gnb -c /opt/UERANSIM/config/oai-gnb.yaml > /opt/Experiments/${experimentDir}/${pcsDir}/gnb.log 2>&1 &" 5 7
         #nr-gnb -c /opt/UERANSIM/config/open5gs-gnb.yaml > /dev/null 2>&1 &
 
-        bash /opt/scripts/startTopNode.sh $experimentDir $pcsDir 0 1 2 3 5 6 7 8
+        bash /opt/scripts/startTopNode.sh $experimentDir $pcsDir 0 1 2 3 5
         
         #rm -rf /opt/Experiments/$experimentDir/$pcsDir/istioPerf
         #mkdir -p /opt/Experiments/$experimentDir/$pcsDir/istioPerf
         PODARRAY=()
         for pod in `kubectl -n $NAMESPACE get po -o json |  jq '.items[] | select(.metadata.name|contains("oai"))| .metadata.name' | grep -v "test\|webui\|upf\|sql\|mongo" | sed 's/"//g'` ;
         do
-            echo $pod
+            #echo $pod
             PODARRAY+=($pod)
         done
         
@@ -98,23 +98,25 @@ do
         #/opt/scripts/launchUeSim.py > /dev/null 2>&1 &
         
         #start-ue
-        for ueNodeIp in "${ueNodes[@]}"
-        do
-            if (( pcsDir > 500 )); then
-                sleep 0.3
-            else
-                sleep 0.2
-            fi
-            echo "UE-SIM IP Address is $ueNodeIp"
-            curl --verbose --request POST --header "Content-Type:application/json" --data '{"numSessions":"'$numSessions'","expDir":"'$experimentDir'","subExpDir":"'$pcsDir'"}'  http://$ueNodeIp:15692
-        done
-        #cd /opt/Experiments/${experimentDir}/${pcsDir} && nr-ue -c /opt/UERANSIM/config/open5gs-ue.yaml -n $numSessions > /opt/Experiments/${experimentDir}/${pcsDir}/uesim.logs 2>&1 &
+        # for ueNodeIp in "${ueNodes[@]}"
+        # do
+        #     if (( pcsDir > 500 )); then
+        #         sleep 0.3
+        #     else
+        #         sleep 0.2
+        #     fi
+        #     echo "UE-SIM IP Address is $ueNodeIp"
+        #     curl --verbose --request POST --header "Content-Type:application/json" --data '{"numSessions":"'$numSessions'","expDir":"'$experimentDir'","subExpDir":"'$pcsDir'"}'  http://$ueNodeIp:15692
+        # done
+        
+        bash /opt/scripts/runNodeCmd.sh "sed -i 's/\(ueCount:\s*\)[0-9]\+/\1${numSessions}/' /opt/gnbsim/config/gnbsim.yaml" 5
+        bash /opt/scripts/runNodeCmd.sh "/opt/gnbsim/gnbsim --cfg /opt/gnbsim/config/gnbsim.yaml > /opt/Experiments/${experimentDir}/${pcsDir}/gnb.log 2>&1 &" 5
         
         sleep $callTime
         cd /opt/scripts
         
         #stop-monitoring
-        bash /opt/scripts/stopTopNode.sh 0 1 2 3 5 6 7 8
+        bash /opt/scripts/stopTopNode.sh 0 1 2 3 5
         bash /opt/scripts/savePodLogs.sh $experimentDir $pcsDir
         
         #sleep 60
@@ -135,16 +137,18 @@ do
         # done
         
         #stop-ran
-        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-ue" 6 8
+        #bash /opt/scripts/runNodeCmd.sh "pkill -f nr-ue" 6 8
         #pkill -f nr-ue
         
-        sleep 5
+        #sleep 5
         
-        bash /opt/scripts/runNodeCmd.sh "pkill -f nr-gnb" 5 7
+        #bash /opt/scripts/runNodeCmd.sh "pkill -f nr-gnb" 5 7
         #pkill -f nr-gnb
+
+        bash /opt/scripts/runNodeCmd.sh "pkill -f gnbsim" 5
         
         sleep 5
-        bash /opt/scripts/runNodeCmd.sh "pkill -f ztx" 5 7
+        bash /opt/scripts/runNodeCmd.sh "pkill -f ztx" 5
         #pkill -f ztx
         
         sleep 5

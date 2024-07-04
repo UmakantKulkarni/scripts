@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [[ $# -ne 3 ]] ; then
-	echo "Expected 3 CLI arguments - Sub-directory & experiment directory to save output and Node Numbers"
+if [[ $# -le 2 ]] ; then
+	echo "Expected at least 2 CLI arguments - Sub-directory & experiment directory to save output and Node Numbers"
     exit 1
 fi
 
