@@ -30,7 +30,7 @@ declare -a ranNodes=("5")
 
 NAMESPACE="oai5gc"
 
-bash /opt/scripts/runNodeCmd.sh "iptables -t mangle -A PREROUTING -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0 ; iptables -t mangle -A OUTPUT -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0" 5 7
+bash /opt/scripts/runNodeCmd.sh "iptables -t mangle -A PREROUTING -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0 ; iptables -t mangle -A OUTPUT -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0" 5
 
 for experimentDir in "${experimentDirAry[@]}"
 do
@@ -164,4 +164,4 @@ do
     done
 done
 
-bash /opt/scripts/runNodeCmd.sh "iptables -t mangle -D PREROUTING -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0 ; iptables -t mangle -D OUTPUT -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0" 5 7
+bash /opt/scripts/runNodeCmd.sh "iptables -t mangle -D PREROUTING -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0 ; iptables -t mangle -D OUTPUT -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0" 5
