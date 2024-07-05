@@ -21,6 +21,14 @@ DEBIAN_FRONTEND=noninteractive apt -y install python3-pip python3-setuptools pyt
 
 pip3 install -U h2
 
+#install go - https://github.com/HewlettPackard/PacketRusher/wiki/Installation
+cd $my_dir
+go_ver=1.22.4
+# Warning this command will remove your existing local Go installation if you have one
+$ wget https://go.dev/dl/go${go_ver}.linux-amd64.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go${go_ver}.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+source $HOME/.profile
+
 # Add Docker's official GPG key:
 rm -f /etc/apt/keyrings/docker.gpg
 apt-get -y update
@@ -121,6 +129,11 @@ cd gtp5g
 make
 make install
 
+#install gnbsim
+cd $my_dir
+git clone https://github.com/UmakantKulkarni/gnbsim
+cd gnbsim
+go build
 
 #Kubernetes & containerd specific config
 # https://kubernetes.io/docs/setup/production-environment/container-runtimes/#forwarding-ipv4-and-letting-iptables-see-bridged-traffic
@@ -163,8 +176,9 @@ kubeadm reset --force --cri-socket unix:///run/containerd/containerd.sock
 
 #https://istio.io/latest/docs/setup/getting-started/#download
 cd /opt
-curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.22.1 TARGET_ARCH=x86_64 sh -
-cd istio-1.22.1
+istio_ver=1.22.1
+curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${istio_ver} TARGET_ARCH=x86_64 sh -
+cd istio-${istio_ver}
 echo "export PATH=$PWD/bin:$PATH" >> ~/.bashrc
 export PATH=$PWD/bin:$PATH
 
