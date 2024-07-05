@@ -88,11 +88,11 @@ do
     do
         for j in `seq 1 1 10`
         do
+            echo "Working on - $exp/$f1-$j/$subexp"
             gnbLogFIle=$exp/$f1-$j/$subexp/gnb.log_node5
             nfFile=$exp/$f1-$j/$subexp/nf_max_queue.txt
             if [ -f "$gnbLogFIle" ] && [ -f "$nfFile" ]; then
                 gnbRes=$(parse_log_file $gnbLogFIle)
-                ueSessCount=$(cat $ueipn1File | wc -l)
                 amfQueueLength=$(cat $nfFile | grep amf | cut -d "," -f2)
                 smfQueueLength=$(cat $nfFile | grep smf | cut -d "," -f2)
                 upfQueueLength=$(cat $nfFile | grep upf | cut -d "," -f2)
