@@ -28,7 +28,7 @@ declare -a ueNodes=("198.22.255.16")
 declare -a gnbNodes=("198.22.255.49")
 declare -a ranNodes=("5")
 
-NAMESPACE="oai5gc"
+NAMESPACE="open5gs"
 
 bash /opt/scripts/runNodeCmd.sh "iptables -t mangle -A PREROUTING -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0 ; iptables -t mangle -A OUTPUT -p sctp -m mark ! --mark 15 -j NFQUEUE --queue-num 0" 5
 
@@ -46,13 +46,7 @@ do
         callTime=60
         
         #cleanup
-        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/nrf|nssf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
-        sleep 5
-        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/amf|pcf|udm|ausf|udr/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
-        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/upf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
-        sleep 5
-        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/smf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
-        
+        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/upf|amf|bsf|pcf|udm|ausf|nrf|nssf|udr|smf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
         sleep 60
         
         bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}" 5
@@ -77,7 +71,7 @@ do
         #rm -rf /opt/Experiments/$experimentDir/$pcsDir/istioPerf
         #mkdir -p /opt/Experiments/$experimentDir/$pcsDir/istioPerf
         PODARRAY=()
-        for pod in `kubectl -n $NAMESPACE get po -o json |  jq '.items[] | select(.metadata.name|contains("oai"))| .metadata.name' | grep -v "test\|webui\|upf\|sql\|mongo" | sed 's/"//g'` ;
+        for pod in `kubectl -n $NAMESPACE get po -o json |  jq '.items[] | select(.metadata.name|contains("open5gs"))| .metadata.name' | grep -v "test\|webui\|upf\|sql\|mongo" | sed 's/"//g'` ;
         do
             #echo $pod
             PODARRAY+=($pod)
@@ -109,8 +103,8 @@ do
         #     curl --verbose --request POST --header "Content-Type:application/json" --data '{"numSessions":"'$numSessions'","expDir":"'$experimentDir'","subExpDir":"'$pcsDir'"}'  http://$ueNodeIp:15692
         # done
         
-        bash /opt/scripts/runNodeCmd.sh "sed -i 's/\(ueCount:\s*\)[0-9]\+/\1${numSessions}/' /opt/gnbsim/config/gnbsim.yaml" 5
-        bash /opt/scripts/runNodeCmd.sh "/opt/gnbsim/gnbsim --cfg /opt/gnbsim/config/gnbsim.yaml > /opt/Experiments/${experimentDir}/${pcsDir}/gnb.log 2>&1 &" 5
+        bash /opt/scripts/runNodeCmd.sh "sed -i 's/\(ueCount:\s*\)[0-9]\+/\1${numSessions}/' /opt/gnbsim/config/gnbsim-open5gs.yaml" 5
+        bash /opt/scripts/runNodeCmd.sh "/opt/gnbsim/gnbsim --cfg /opt/gnbsim/config/gnbsim-open5gs.yaml > /opt/Experiments/${experimentDir}/${pcsDir}/gnb.log 2>&1 &" 5
         
         sleep $callTime
         cd /opt/scripts

@@ -101,8 +101,8 @@ wget https://raw.githubusercontent.com/UmakantKulkarni/myCodes/master/k8/metrics
 
 cd $my_dir
 git clone -b ztx_01 https://github.com/UmakantKulkarni/Secure5G
-git clone -b benchmark https://github.com/UmakantKulkarni/opensource-5g-core
-git clone -b oai https://github.com/UmakantKulkarni/scripts
+git clone -b ztx_cl https://github.com/UmakantKulkarni/opensource-5g-core
+git clone -b ztx_cl https://github.com/UmakantKulkarni/scripts
 git clone -b benchmark --recursive https://github.com/UmakantKulkarni/open5gs
 git clone -b ztx_01 https://github.com/UmakantKulkarni/oai-cn5g-fed
 #git clone https://github.com/UmakantKulkarni/free5gmano

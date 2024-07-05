@@ -3,7 +3,7 @@
 # Setup custom root certificate for istio
 # https://istio.io/latest/docs/tasks/security/cert-management/plugin-ca-cert/
 
-NAMESPACE=oai5gc
+NAMESPACE=open5gs
 if [[ $# -eq 1 ]] ; then
     istio_enabled=$1
 elif [[ $# -eq 2 ]] ; then
@@ -11,7 +11,7 @@ elif [[ $# -eq 2 ]] ; then
     NAMESPACE=$2
 else
     istio_enabled=0
-    NAMESPACE=oai5gc
+    NAMESPACE=open5gs
 fi
 
 /opt/istio-1.22.1/bin/istioctl uninstall -c /etc/kubernetes/admin.conf -y --purge
@@ -33,7 +33,7 @@ Hostname=$(hostname)
 if [ "$Hostname" = "wabash" ] ; then
     cd /home/ukulkarn/opensource-5g-core/helm-chart/
 else
-    cd /opt/oai-cn5g-fed/charts/oai-5g-core/oai-5g-basic
+    cd /opt/opensource-5g-core/helm-chart/
 fi
 cp /etc/kubernetes/admin.conf ~/.kube/config
 export KUBECONFIG=/etc/kubernetes/admin.conf

@@ -11,7 +11,7 @@ do
 	echo ""
 	echo "Labelling Node - $node"
 	echo ""
-    kubectl label --overwrite nodes $node.$nodePrefix kubernetes.io/ztx-nf-type=${nodeLabels[arrayIndex]}
+    kubectl label --overwrite nodes $node.$nodePrefix pcs-nf-type=${nodeLabels[arrayIndex]}
 	echo ""
 	echo "Finished Labelling Node - $node"
     echo ""
