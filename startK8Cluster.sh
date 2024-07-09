@@ -8,8 +8,8 @@ fi
 intf="$1"
 masterNode="0"
 declare -a workerNodes=("1" "2" "3")
-declare -a ranNodes=("4" "5" "6" "7")
-declare -a allK8Nodes=("0" "1" "2" "3" "4" "5" "6" "7")
+declare -a ranNodes=("4")
+declare -a allK8Nodes=("0" "1" "2" "3" "4")
 
 #https://computingforgeeks.com/deploy-kubernetes-cluster-on-ubuntu-with-kubeadm/
 #https://computingforgeeks.com/install-mirantis-cri-dockerd-as-docker-engine-shim-for-kubernetes/
@@ -113,8 +113,21 @@ do
 done
 
 
-echo "Waiting 200 seconds for nodes to be ready..."
+echo "Waiting 30 seconds for nodes to be ready..."
 sleep 30
+
+echo ""
+echo "Installing metrics server"
+echo ""
+
+mcmd="kubectl create -f /opt/k8s/metrics-server.yaml"
+ssh -o StrictHostKeyChecking=no root@node$masterNode "$mcmd"
+sleep 10
+
+echo ""
+echo "Removing taints & waiting for 170 seconds"
+echo ""
+
 mcmd="kubectl taint nodes $(kubectl get nodes --selector=node-role.kubernetes.io/control-plane | awk 'FNR==2{print $1}') node-role.kubernetes.io/control-plane-"
 ssh -o StrictHostKeyChecking=no root@node$masterNode "$mcmd"
 sleep 170
