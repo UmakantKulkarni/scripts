@@ -1,6 +1,7 @@
 # 5G
 
 ## Deploy 5G core on K8s
+### Please wait for previous command to finish before you execute next command.
 - On cloudlab, using sfc_profile and rs630 node, create cluster with 5 nodes
 
 - ssh on node0
