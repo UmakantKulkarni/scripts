@@ -16,7 +16,7 @@
 - on node 0:
 
     - cd /opt/scripts
-    - ./runNodeCmd.sh "git clone -b ztx_cl https://github.com/UmakantKulkarni/scripts" 1 2 3 4
+    - ./runNodeCmd.sh "cd /opt/ && git clone -b ztx_cl https://github.com/UmakantKulkarni/scripts" 1 2 3 4
     - ./runNodeCmd.sh "bash /opt/scripts/configK8Nodes.sh" 0 1 2 3 4
 
     - ifconfig - get interface name of public ip = intf
