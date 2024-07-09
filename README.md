@@ -16,7 +16,8 @@
 - on node 0:
 
     - cd /opt/scripts
-    - ./configK8Nodes.sh $intf
+    - ./runNodeCmd.sh "git clone -b ztx_cl https://github.com/UmakantKulkarni/scripts" 1 2 3 4
+    - ./runNodeCmd.sh "bash /opt/scripts/configK8Nodes.sh" 0 1 2 3 4
 
     - ifconfig - get interface name of public ip = intf
     - cd /opt/scripts
@@ -26,4 +27,4 @@
     - cd /opt/scripts
     - ./nukeOpen5gs.sh 0
 
-    - Verify if open5gs is deployed.
+    - Verify if open5gs is deployed with ZTX security enabled.
