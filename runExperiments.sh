@@ -46,7 +46,7 @@ do
         callTime=60
         
         #cleanup
-        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/upf|amf|bsf|pcf|udm|ausf|nrf|nssf|udr|smf/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
+        kubectl get pods -n $NAMESPACE --no-headers=true | awk '/upf|amf|bsf|pcf|udm|ausf|nrf|nssf|udr|smf|scp/{print $1}'| xargs  kubectl delete pod -n $NAMESPACE
         sleep 60
         
         bash /opt/scripts/runNodeCmd.sh "mkdir -p /opt/Experiments/${experimentDir}" 4
