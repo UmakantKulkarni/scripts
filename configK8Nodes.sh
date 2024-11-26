@@ -23,7 +23,7 @@ pip3 install -U h2
 
 #install go - https://github.com/HewlettPackard/PacketRusher/wiki/Installation
 cd $my_dir
-go_ver=1.22.4
+go_ver=1.23.3
 # Warning this command will remove your existing local Go installation if you have one
 $ wget https://go.dev/dl/go${go_ver}.linux-amd64.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go${go_ver}.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
@@ -47,12 +47,13 @@ apt-get -y update
 apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 #https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+k8s_ver=v1.31
 rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 apt-get -y update
 apt-get install -y apt-transport-https ca-certificates curl gpg
 mkdir -p -m 755 /etc/apt/keyrings
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/${k8s_ver}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/${k8s_ver}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 apt-get -y update
 apt-get install -y kubectl kubelet kubeadm
 apt-mark hold kubelet kubeadm kubectl
@@ -124,7 +125,7 @@ git clone -b ztx_01 https://github.com/UmakantKulkarni/oai-cn5g-fed
 
 cd $my_dir
 modprobe -r gtp5g
-git clone -b v0.6.7 https://github.com/free5gc/gtp5g.git
+git clone -b v0.9.3 https://github.com/free5gc/gtp5g.git
 cd gtp5g
 make
 make install
@@ -176,7 +177,7 @@ kubeadm reset --force --cri-socket unix:///run/containerd/containerd.sock
 
 #https://istio.io/latest/docs/setup/getting-started/#download
 cd /opt
-istio_ver=1.22.1
+istio_ver=1.24.1
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${istio_ver} TARGET_ARCH=x86_64 sh -
 cd istio-${istio_ver}
 echo "export PATH=$PWD/bin:$PATH" >> ~/.bashrc
