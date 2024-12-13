@@ -14,7 +14,7 @@ else
     NAMESPACE=open5gs
 fi
 
-istio_ver=1.22.1
+istio_ver=1.24.1
 kubectl --kubeconfig=/etc/kubernetes/admin.conf config set-context --current --namespace=$NAMESPACE
 /opt/istio-${istio_ver}/bin/istioctl uninstall -c /etc/kubernetes/admin.conf -y --purge
 kubectl --kubeconfig=/etc/kubernetes/admin.conf delete namespace istio-system
@@ -31,12 +31,7 @@ if [[ $istio_enabled -eq 1 ]] ; then
     kubectl --kubeconfig=/etc/kubernetes/admin.conf label namespace $NAMESPACE istio-injection=enabled --overwrite
 fi
 
-Hostname=$(hostname)
-if [ "$Hostname" = "wabash" ] ; then
-    cd /home/ukulkarn/opensource-5g-core/helm-chart/
-else
-    cd /opt/opensource-5g-core/helm-chart/
-fi
+cd /opt/opensource-5g-core/helm-chart/
 cp /etc/kubernetes/admin.conf ~/.kube/config
 export KUBECONFIG=/etc/kubernetes/admin.conf
 helm dependency build
