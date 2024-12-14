@@ -59,9 +59,9 @@ apt-get install -y kubectl kubelet kubeadm
 apt-mark hold kubelet kubeadm kubectl
 
 # Install kind For AMD64 / x86_64
-#curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
-#chmod +x ./kind
-#mv ./kind /usr/local/bin/kind
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.25.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
 
 cd $my_dir
 git clone -b ztx_01 https://github.com/UmakantKulkarni/UERANSIM && cd UERANSIM && make

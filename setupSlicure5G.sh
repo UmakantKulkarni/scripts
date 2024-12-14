@@ -148,4 +148,4 @@ kubectl taint nodes $(kubectl get nodes --selector=node-role.kubernetes.io/contr
 kubectl patch svc amf-open5gs-sctp -n $NAMESPACE -p "{\"spec\": {\"type\": \"LoadBalancer\", \"externalIPs\":[\"$worker_node1_ip\"]}}"
 
 testPod=`kubectl -n $NAMESPACE get po -o json |  jq '.items[] | select(.metadata.name|contains("open5gs"))| .metadata.name' | grep "test" | sed 's/"//g'`
-kubectl exec -it $testPod -n $NAMESPACE -c myapp-container -- python3 /root/scripts/addMongoSubs.py 100
+kubectl exec -it $testPod -n $NAMESPACE -c test -- python3 /root/scripts/addMongoSubs.py 100
