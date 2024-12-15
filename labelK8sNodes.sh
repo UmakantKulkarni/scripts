@@ -3,14 +3,13 @@
 nodePrefix="$1"
 declare -a nodeLabels=("master" "amf" "smf" "upf")
 declare -a workerNodes=("0" "1" "2" "3")
-myname=$(hostname)
 
 arrayIndex=0
 for nodeNum in "${workerNodes[@]}"
 do	
 	node=node$nodeNum
 	nodename=$node.$nodePrefix
-	if [ "$myname" == "wabash" ]; then
+	if [ "$nodePrefix" == "kind" ]; then
 		if [ "$nodeNum" == "0" ]; then
 			nodename="kind-control-plane"
 		elif [ "$nodeNum" == "1" ]; then
