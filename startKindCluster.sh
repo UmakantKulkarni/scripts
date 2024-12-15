@@ -25,7 +25,7 @@ kind create cluster --config $kind_cluster_config_file
 sleep 10
 kubectl taint nodes $(kubectl get nodes --selector=node-role.kubernetes.io/control-plane | awk 'FNR==2{print $1}') node-role.kubernetes.io/control-plane-
 kubectl create -f $my_dir/k8s/metrics-server.yaml
-bash $my_dir/scripts/labelK8sNodes.sh
+bash $my_dir/scripts/labelK8sNodes.sh kind
 kubectl taint nodes $(kubectl get nodes --selector=node-role.kubernetes.io/control-plane | awk 'FNR==2{print $1}') node-role.kubernetes.io/control-plane-
 sleep 10
 echo "Kind cluster created successfully"
