@@ -19,7 +19,7 @@ DEBIAN_FRONTEND=noninteractive apt -y install python3-pip python3-setuptools pyt
 #systemctl restart ssh
 #systemctl enable ssh
 
-pip3 install -U h2
+pip3 install -U h2 pyaml flask
 
 #install go - https://github.com/HewlettPackard/PacketRusher/wiki/Installation
 cd $my_dir
