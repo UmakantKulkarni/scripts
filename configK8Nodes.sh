@@ -176,13 +176,33 @@ kubeadm reset --force --cri-socket unix:///var/run/crio/crio.sock
 kubeadm reset --force --cri-socket unix:///run/containerd/containerd.sock
 
 #https://istio.io/latest/docs/setup/getting-started/#download
-cd /opt
+cd $my_dir
 istio_ver=1.24.1
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${istio_ver} TARGET_ARCH=x86_64 sh -
 cd istio-${istio_ver}
 echo "export PATH=$PWD/bin:$PATH" >> ~/.bashrc
 export PATH=$PWD/bin:$PATH
 
+#https://docs.cilium.io/en/latest/installation/kind/
+cd $my_dir
+curl -LO https://github.com/cilium/cilium/archive/main.tar.gz
+tar xzf main.tar.gz
+cd cilium-main/install/kubernetes
+
+#https://docs.cilium.io/en/stable/installation/kind/
+helm repo add cilium https://helm.cilium.io/
+
+cd $my_dir
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+cilium version --client
+
+cd $my_dir
 echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> ~/.bashrc
 echo "alias k='kubectl'" >> ~/.bashrc
 echo "alias kp='kubectl get pods --all-namespaces'" >> ~/.bashrc
