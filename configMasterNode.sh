@@ -8,7 +8,7 @@ fi
 intf="$1"
 ip=$(ip addr show $intf | grep -o "inet [0-9]*\.[0-9]*\.[0-9]*\.[0-9]*" | grep -o "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*")
 
-kubeadm init --pod-network-cidr=10.244.0.0/16 --token-ttl=0 --apiserver-advertise-address=$ip
+kubeadm init --pod-network-cidr=10.244.0.0/16 --token-ttl=0 --apiserver-advertise-address=$ip --control-plane-endpoint=$ip
 sleep 60
 export KUBECONFIG=/etc/kubernetes/admin.conf
 kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /opt/k8s/calico.yaml

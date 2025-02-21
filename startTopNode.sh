@@ -25,7 +25,7 @@ do
 	echo ""
     if [[ $i -eq 0 ]] ; then
         #eval "$dscmd"
-        #eval "$psscmd"
+        eval "$psscmd"
         ssh -o StrictHostKeyChecking=no root@$node "$wcmd"
         ssh -o StrictHostKeyChecking=no root@$node "$mcmd"
     else
