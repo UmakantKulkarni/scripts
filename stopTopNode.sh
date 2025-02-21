@@ -19,7 +19,7 @@ do
         #eval "$ocmd"
         #eval "$ktcmd"
         #eval "$dscmd"
-        #eval "$psscmd"
+        eval "$psscmd"
         ssh -o StrictHostKeyChecking=no root@$node "$wcmd"
         ssh -o StrictHostKeyChecking=no root@$node "$mcmd"
     else
