@@ -25,7 +25,7 @@ pip3 install -U h2 pyaml flask scapy
 cd $my_dir
 go_ver=1.23.4
 # Warning this command will remove your existing local Go installation if you have one
-$ wget https://go.dev/dl/go${go_ver}.linux-amd64.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go${go_ver}.linux-amd64.tar.gz
+wget https://go.dev/dl/go${go_ver}.linux-amd64.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go${go_ver}.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
 source $HOME/.profile
 
