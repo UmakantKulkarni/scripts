@@ -47,7 +47,7 @@ apt-get -y update
 apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 #https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
-k8s_ver=v1.31
+k8s_ver=v1.33
 rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 apt-get -y update
 apt-get install -y apt-transport-https ca-certificates curl gpg
@@ -59,7 +59,7 @@ apt-get install -y kubectl kubelet kubeadm
 apt-mark hold kubelet kubeadm kubectl
 
 # Install kind For AMD64 / x86_64
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.25.0/kind-linux-amd64
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 
@@ -110,9 +110,9 @@ wget https://raw.githubusercontent.com/UmakantKulkarni/myCodes/master/k8/metrics
 
 cd $my_dir
 git clone -b ztx_01 https://github.com/UmakantKulkarni/Secure5G
-git clone -b ztx_cl https://github.com/UmakantKulkarni/opensource-5g-core
-git clone -b ztx_cl https://github.com/UmakantKulkarni/scripts
-git clone -b benchmark --recursive https://github.com/UmakantKulkarni/open5gs
+git clone -b ztx_demo_aug https://github.com/UmakantKulkarni/opensource-5g-core
+git clone -b ztx_demo_aug https://github.com/UmakantKulkarni/scripts
+git clone -b ztx_demo_aug --recursive https://github.com/UmakantKulkarni/open5gs
 git clone -b ztx_01 https://github.com/UmakantKulkarni/oai-cn5g-fed
 #git clone https://github.com/UmakantKulkarni/free5gmano
 #git clone https://github.com/UmakantKulkarni/free5gc
@@ -177,7 +177,7 @@ kubeadm reset --force --cri-socket unix:///run/containerd/containerd.sock
 
 #https://istio.io/latest/docs/setup/getting-started/#download
 cd $my_dir
-istio_ver=1.24.1
+istio_ver=1.26.1
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${istio_ver} TARGET_ARCH=x86_64 sh -
 cd istio-${istio_ver}
 echo "export PATH=$PWD/bin:$PATH" >> ~/.bashrc
