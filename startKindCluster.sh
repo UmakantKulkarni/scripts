@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+cilium_enabled=0
 if [[ $# -eq 1 ]] ; then
     cilium_enabled=$1
 else
@@ -22,6 +23,13 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
+  extraPortMappings:
+  - containerPort: 30090 # Matches the NodePort of your service
+    hostPort: 9191
+  - containerPort: 30080 # Matches the NodePort of your service
+    hostPort: 8181
+  - containerPort: 30070 # Matches the NodePort of your service
+    hostPort: 7171
 - role: worker
 - role: worker
 - role: worker
@@ -35,6 +43,13 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
+  extraPortMappings:
+  - containerPort: 30090 # Matches the NodePort of your service
+    hostPort: 9191
+  - containerPort: 30080 # Matches the NodePort of your service
+    hostPort: 8181
+  - containerPort: 30070 # Matches the NodePort of your service
+    hostPort: 7171
 - role: worker
 - role: worker
 - role: worker
