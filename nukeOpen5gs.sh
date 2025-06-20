@@ -21,6 +21,7 @@ kubectl --kubeconfig=/etc/kubernetes/admin.conf delete namespace istio-system
 kubectl --kubeconfig=/etc/kubernetes/admin.conf label namespace $NAMESPACE istio-injection=disabled --overwrite
 
 kubectl --kubeconfig=/etc/kubernetes/admin.conf delete namespace $NAMESPACE
+kubectl delete clusterrolebinding logviewer
 sleep 30
 kubectl --kubeconfig=/etc/kubernetes/admin.conf delete pv mongodb-pv-volume-$NAMESPACE
 sleep 30
