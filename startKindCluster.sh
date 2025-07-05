@@ -24,12 +24,14 @@ apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
   extraPortMappings:
-  - containerPort: 30090 # Matches the NodePort of your service
+  - containerPort: 30090 # Matches the NodePort of your prometheus service
     hostPort: 9191
-  - containerPort: 30080 # Matches the NodePort of your service
+  - containerPort: 30080 # Matches the NodePort of your grafana service
     hostPort: 8181
-  - containerPort: 30070 # Matches the NodePort of your service
+  - containerPort: 30070 # Matches the NodePort of your logviewer service
     hostPort: 7171
+  - containerPort: 30412 # Matches the NodePort of your amf-sctp service
+    hostPort: 30412  
 - role: worker
 - role: worker
 - role: worker
@@ -44,12 +46,14 @@ apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
   extraPortMappings:
-  - containerPort: 30090 # Matches the NodePort of your service
+  - containerPort: 30090 # Matches the NodePort of your prometheus service
     hostPort: 9191
-  - containerPort: 30080 # Matches the NodePort of your service
+  - containerPort: 30080 # Matches the NodePort of your grafana service
     hostPort: 8181
-  - containerPort: 30070 # Matches the NodePort of your service
+  - containerPort: 30070 # Matches the NodePort of your logviewer service
     hostPort: 7171
+  - containerPort: 30412 # Matches the NodePort of your amf-sctp service
+    hostPort: 30412
 - role: worker
 - role: worker
 - role: worker
