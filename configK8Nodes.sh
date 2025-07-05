@@ -64,7 +64,7 @@ chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 
 cd $my_dir
-git clone -b ztx_01 https://github.com/UmakantKulkarni/UERANSIM && cd UERANSIM && make
+git clone -b ztx_demo_aug https://github.com/UmakantKulkarni/UERANSIM && cd UERANSIM && make
 cp build/nr-* /usr/local/bin/
 cd ..
 
