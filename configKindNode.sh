@@ -20,7 +20,7 @@ sleep 30
 
 cd /opt
 curl -L https://istio.io/downloadIstio | sh -
-cd istio-1.24.1
+cd istio-1.26.1
 echo "export PATH=$PWD/bin:$PATH" >> ~/.bashrc
 export PATH=$PWD/bin:$PATH
 
