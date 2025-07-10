@@ -112,7 +112,7 @@ cd $my_dir
 git clone -b ztx_01 https://github.com/UmakantKulkarni/Secure5G
 git clone -b ztx_demo_aug https://github.com/UmakantKulkarni/opensource-5g-core
 git clone -b ztx_demo_aug https://github.com/UmakantKulkarni/scripts
-git clone -b ztx_demo_aug --recursive https://github.com/UmakantKulkarni/open5gs
+git clone -b v2.7.2 --recursive https://github.com/open5gs/open5gs
 git clone -b ztx_01 https://github.com/UmakantKulkarni/oai-cn5g-fed
 #git clone https://github.com/UmakantKulkarni/free5gmano
 #git clone https://github.com/UmakantKulkarni/free5gc
