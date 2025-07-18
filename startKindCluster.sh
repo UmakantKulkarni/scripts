@@ -34,7 +34,9 @@ nodes:
   - containerPort: 30070 # Matches the NodePort of your logviewer service
     hostPort: 7171
   - containerPort: 30412 # Matches the NodePort of your amf-sctp service
-    hostPort: 30412  
+    hostPort: 30412
+  - containerPort: 32080 # Matches the NodePort of your ztx-controller-external service
+    hostPort: 32080
 - role: worker
 - role: worker
 - role: worker
@@ -57,6 +59,8 @@ nodes:
     hostPort: 7171
   - containerPort: 30412 # Matches the NodePort of your amf-sctp service
     hostPort: 30412
+  - containerPort: 32080 # Matches the NodePort of your ztx-controller-external service
+    hostPort: 32080
 - role: worker
 - role: worker
 - role: worker
