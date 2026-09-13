@@ -1,0 +1,51 @@
+1. Login to Host
+
+2. Run setupPhysicalServer.sh
+
+3. rm -rf /var/lib/libvirt/images/*
+
+4. Make sure virbro0 interface is up and running; if not, reboot the Host
+
+5. createvm:
+cd /tmp
+wget https://raw.githubusercontent.com/UmakantKulkarni/kvm-setup/main/createvm
+chmod +x createvm
+mv createvm /usr/local/bin/
+
+6. Launch VM:
+mkdir /var/lib/libvirt/images/purdue-ztx
+cd /tmp
+scp ubuntu-22.04-purdue-ztx.qcow2 /var/lib/libvirt/images/purdue-ztx/
+createvm purdue-ztx 101
+
+7. Login to VM:
+virsh domifaddr purdue-ztx
+root@<vm-ip>
+purdue@ztx
+
+8. Make changes to VM
+
+9. Exit and Shutdow/undefine vm:
+sudo virsh shutdown purdue-ztx
+sudo virsh undefine purdue-ztx
+
+10. Prepare new VM image:
+cd /tmp
+rm -rf ubuntu-22.04-purdue-ztx.qcow2
+qemu-img convert -O qcow2 /var/lib/libvirt/images/purdue-ztx/purdue-ztx.qcow2 /tmp/ubuntu-22.04-purdue-ztx.qcow2
+
+11. Verify if image is standalone:
+qemu-img info --backing-chain /tmp/ubuntu-22.04-purdue-ztx.qcow2
+
+12. Delete original qcow2 from purdue server:
+rm -rf /homes/ukulkarn/.www/ubuntu-22.04-purdue-ztx.qcow2
+
+13. Copy new qcow2 to purdue server:
+scp /tmp/ubuntu-22.04-purdue-ztx.qcow2 ukulkarn@mc21.cs.purdue.edu:/homes/ukulkarn/.www/
+chmod ugo+rwx /homes/ukulkarn/.www/*
+
+14. Reference: https://stackoverflow.com/a/65723399/12865444
+
+15. Delete bridge interface:
+ip link set virbr0 down
+brctl delbr virbr0

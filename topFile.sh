@@ -4,7 +4,7 @@ while true
 do
         echo " " >> top_data_$Hostname.txt
         date +"%F--%T.%N" >> top_data_$Hostname.txt
-        pids=( $(top -b -n 1 | grep "open5gs\|docker\|kube\|calico\|container\|bash\|mongo\|python" | awk '{print $1}') )
+        pids=( $(top -b -n 1 | grep "open5gs\|docker\|kube\|calico\|container\|etcd\|istio\|vpn\|nr\|envoy\|sql\|mongo\|gnb\|ztx" | awk '{print $1}') )
         numpids=${#pids[@]}
         topcmd="top -b -n 1"
         for i in "${pids[@]}"

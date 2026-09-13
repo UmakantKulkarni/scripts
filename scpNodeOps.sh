@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-cd /opt/ && mkdir -p Ue_Ops
+cd /opt/ && mkdir -p Node_Ops
 
-ocmd="scp -o StrictHostKeyChecking=no -r /opt/Experiments/* root@node0:/opt/Ue_Ops"
+ocmd="scp -o StrictHostKeyChecking=no -r /opt/Experiments/* root@node0:/opt/Node_Ops"
 for i in "$@"
 do	
 	node=node$i
 	echo ""
 	echo "Starting SCP From Node - $node"
 	echo ""
-    cd /opt/Ue_Ops && mkdir -p $node
+    cd /opt/Node_Ops && mkdir -p $node
     wcmd="$ocmd/$node/ && exit"
     ssh -o StrictHostKeyChecking=no root@$node "$wcmd"
 	echo ""
@@ -18,7 +18,7 @@ do
         nodeNum=$((nodeNum + 1))
 done
 
-for uexp in /opt/Ue_Ops/* ;
+for uexp in /opt/Node_Ops/* ;
 do
     f1=`basename $uexp`
     for exp in $uexp/* ;

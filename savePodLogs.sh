@@ -48,36 +48,43 @@ rm -f /opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt
 for pod in "${ARRAY[@]}"
 do
     rm -f /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt
-    kubectl logs $pod -n open5gs > /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt
+    #rm -f /opt/Experiments/$experimentDir/$pcsDir/${pod}_istio_logs.txt
+    #rm -f /opt/Experiments/$experimentDir/$pcsDir/${pod}_ztx_logs.txt
     nfName=$(echo $pod | awk -v FS="(open5gs-|-deployment)" '{print $2}')
+    kubectl logs $pod -n open5gs -c $nfName > /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt
+    #kubectl logs $pod -n open5gs -c ztx > /opt/Experiments/$experimentDir/$pcsDir/${pod}_ztx_logs.txt
+    if [[ "$nfName" == "amf" ||  "$nfName" == "smf" ||  "$nfName" == "upf" ]] ; then
+        echo ""
+        #kubectl logs $pod -n open5gs -c istio-proxy > /opt/Experiments/$experimentDir/$pcsDir/${pod}_istio_logs.txt
+    fi
     maxQueue=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep " ogs_queue_size is" | grep "PCS " | awk '{print $9}' | sort -rn | head -n 1)
     if [[ "$nfName" == "amf" ]] ; then
         startTime=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep InitialUEMessage | head -1 | awk '{print $2}' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | rev | cut -c 2- | rev)
-        stopTime=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep PCS | grep -v "ogs_queue_size" | tail -1 | awk '{print $2}' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | rev | cut -c 2- | rev)
+        stopTime=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep "UE SUPI\[imsi-" | tail -1 | awk '{print $2}' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | rev | cut -c 2- | rev)
         d1=$(date -d $startTime "+%s.%N")
         d2=$(date -d $stopTime "+%s.%N")
         timediff=$(echo "$d2 - $d1" | bc)
         echo "$nfName,$maxQueue,$timediff" >> /opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt
         echo " " >> /opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt
-        save_trans_times "$nfName" "/opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt" "/opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt"
+        #save_trans_times "$nfName" "/opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt" "/opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt"
     elif [[ "$nfName" == "smf" ]] ; then
         startTime=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep "\[Added\] Number of SMF-UEs is now" | head -1 | awk '{print $2}' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | rev | cut -c 2- | rev)
-        stopTime=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep PCS | grep -v "ogs_queue_size" | tail -1 | awk '{print $2}' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | rev | cut -c 2- | rev)
+        stopTime=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep "UE SUPI\[imsi-" | tail -1 | awk '{print $2}' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | rev | cut -c 2- | rev)
         d1=$(date -d $startTime "+%s.%N")
         d2=$(date -d $stopTime "+%s.%N")
         timediff=$(echo "$d2 - $d1" | bc)
         echo "$nfName,$maxQueue,$timediff" >> /opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt
         echo " " >> /opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt
-        save_trans_times "$nfName" "/opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt" "/opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt"
+        #save_trans_times "$nfName" "/opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt" "/opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt"
     elif [[ "$nfName" == "upf" ]] ; then
         startTime=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep "\[Added\] Number of UPF-Sessions is now" | head -1 | awk '{print $2}' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | rev | cut -c 2- | rev)
-        stopTime=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep PCS | grep -v "ogs_queue_size" | tail -1 | awk '{print $2}' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | rev | cut -c 2- | rev)
+        stopTime=$(cat /opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt | grep "UE F-SEID\[UP:" | tail -1 | awk '{print $2}' | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | rev | cut -c 2- | rev)
         d1=$(date -d $startTime "+%s.%N")
         d2=$(date -d $stopTime "+%s.%N")
         timediff=$(echo "$d2 - $d1" | bc)
         echo "$nfName,$maxQueue,$timediff" >> /opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt
         echo " " >> /opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt
-        save_trans_times "$nfName" "/opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt" "/opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt"
+        #save_trans_times "$nfName" "/opt/Experiments/$experimentDir/$pcsDir/${pod}_logs.txt" "/opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt"
     else
         echo "$nfName,$maxQueue" >> /opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt
         echo " " >> /opt/Experiments/$experimentDir/$pcsDir/nf_max_queue.txt
